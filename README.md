@@ -5,7 +5,7 @@ A modern, secure, and user-friendly password manager built with React, TypeScrip
 ## 📅 7-Day Build Log
 
 *   **Day 1 (Feb 2):** ✅ Project Initialization & UI Shell
-*   **Day 2 (Feb 3):** ⏳ Authentication System
+*   **Day 2 (Feb 3):** ✅ Authentication System (Unlock Screen & Panic Lock)
 *   **Day 3 (Feb 4):** ⏳ Vault Display (Read-Only)
 *   **Day 4 (Feb 5):** ⏳ Core CRUD Functionality
 *   **Day 5 (Feb 6):** ⏳ Security Tools (Generator)
