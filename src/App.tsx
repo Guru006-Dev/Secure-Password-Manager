@@ -38,9 +38,11 @@ function AuthenticatedApp() {
 function App() {
     return (
         <AuthProvider>
-            <Router>
-                <AuthenticatedApp />
-            </Router>
+            <VaultProvider>
+                <Router>
+                    <AuthenticatedApp />
+                </Router>
+            </VaultProvider>
         </AuthProvider>
     );
 }
