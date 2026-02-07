@@ -2,7 +2,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Navigation from './components/Navigation';
 import Dashboard from './pages/Dashboard';
 import Unlock from './pages/Unlock';
+import Settings from './pages/Settings';
+import Generator from './pages/Generator';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { VaultProvider } from './context/VaultContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 function AuthenticatedApp() {
     const { isLocked } = useAuth();
@@ -12,7 +16,7 @@ function AuthenticatedApp() {
     }
 
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row">
+        <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row transition-colors duration-500">
             {/* Navigation Sidebar/Top bar */}
             <Navigation />
 
@@ -27,6 +31,8 @@ function AuthenticatedApp() {
                 <div className="relative z-10 h-full overflow-auto">
                     <Routes>
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/generator" element={<Generator />} />
+                        <Route path="/settings" element={<Settings />} />
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
                 </div>
@@ -38,11 +44,13 @@ function AuthenticatedApp() {
 function App() {
     return (
         <AuthProvider>
-            <VaultProvider>
-                <Router>
-                    <AuthenticatedApp />
-                </Router>
-            </VaultProvider>
+            <ThemeProvider>
+                <VaultProvider>
+                    <Router>
+                        <AuthenticatedApp />
+                    </Router>
+                </VaultProvider>
+            </ThemeProvider>
         </AuthProvider>
     );
 }
