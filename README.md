@@ -56,6 +56,12 @@ A secure, zero-knowledge password manager built with modern web technologies. Th
     npm run build
     ```
 
+5.  **Run Unit Tests**
+    ```bash
+    npm test
+    ```
+    This runs the [Vitest](https://vitest.dev/) suite to verify core logic (password generator, validation, etc.).
+
 ## 🛡️ Security Note
 
 This application implements **client-side encryption** using AES-256. While robust, for production environments, consider additional layers such as:
