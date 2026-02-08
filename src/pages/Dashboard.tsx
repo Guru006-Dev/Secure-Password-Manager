@@ -1,13 +1,16 @@
+```
 import { useState } from 'react';
 import { Search, Plus, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useVault } from '../context/VaultContext';
-import VaultItem from '../components/VaultItem';
+import { useToast } from '../context/ToastContext';
 import EntryModal from '../components/EntryModal';
 import { VaultEntry } from '../types';
+import VaultItem from '../components/VaultItem';
 
 export default function Dashboard() {
     const { entries, addEntry, updateEntry, deleteEntry, toggleFavorite } = useVault();
+    const { addToast } = useToast(); // Hook
     const [search, setSearch] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEntry, setEditingEntry] = useState<VaultEntry | null>(null);
@@ -20,9 +23,16 @@ export default function Dashboard() {
     const handleSave = (entryData: Partial<VaultEntry>) => {
         if (editingEntry) {
             updateEntry(editingEntry.id, entryData);
+            addToast('Entry updated successfully', 'success');
         } else {
             addEntry(entryData as any);
+            addToast('New entry added to vault', 'success');
         }
+    };
+
+    const handleDelete = (id: string) => {
+        deleteEntry(id);
+        addToast('Entry deleted', 'error');
     };
 
     const openAddModal = () => {
@@ -84,8 +94,9 @@ export default function Dashboard() {
                             key={entry.id}
                             entry={entry}
                             onEdit={openEditModal}
-                            onDelete={deleteEntry}
+                            onDelete={handleDelete} // Use wrapper
                             onToggleFavorite={toggleFavorite}
+                        // Pass toast for copy if needed, or handle in VaultItem
                         />
                     ))}
                 </AnimatePresence>

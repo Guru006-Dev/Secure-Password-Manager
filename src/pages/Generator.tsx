@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Copy, RefreshCw, Check, ShieldCheck, ShieldAlert, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generatePassword, calculateStrength, GeneratorOptions } from '../utils/generator';
+import { useToast } from '../context/ToastContext';
 
 export default function Generator() {
+    const { addToast } = useToast();
     const [password, setPassword] = useState('');
     const [copied, setCopied] = useState(false);
     const [strength, setStrength] = useState<'Weak' | 'Medium' | 'Strong'>('Weak');
