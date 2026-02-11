@@ -45,6 +45,10 @@ It runs entirely client-side (for this version), ensuring that your secrets rema
     - Add, Edit, and Delete credentials.
     - "Favorite" entries for quick access.
     - One-click Copy-to-Clipboard with toast notifications.
+- **Profile Management:**
+    - Personalized dashboard with generic avatar/initials.
+    - Customizable profile banner and accent colors.
+    - Persistent user settings via Local Storage.
 - **Responsive Design:** Fully optimized for Mobile, Tablet, and Desktop.
 
 ## Tech Stack
@@ -105,7 +109,7 @@ We use a modern testing stack to ensure reliability and security.
 
 *   **Test Runner:** [Vitest](https://vitest.dev/) (Blazing fast, Vite-native)
 *   **Assertions:** [React Testing Library](https://testing-library.com/) (Component testing)
-*   **Environment:** jsdom (Browser simulation)
+*   **Structure:** Co-located tests (e.g., `src/utils/passwordStrength.test.ts`)
 
 #### Execute Unit Tests
 Run the full test suite to verify cryptographic utilities and core logic:
@@ -151,28 +155,26 @@ npm test
 ```bash
 src/
 ├── components/           # Reusable UI Components
-│   ├── Navigation.tsx    # Sidebar/Mobile Menu associated logic
-│   ├── VaultItem.tsx     # Individual password entry card
-│   └── EntryModal.tsx    # Add/Edit form using Dialog
-├── context/              # Global State Management (React Context)
-│   ├── AuthContext.tsx   # Master Password & Unlock State
-│   ├── VaultContext.tsx  # CRUD operations & Encryption logic
-│   └── ThemeContext.tsx  # Dark/Light mode & Accent colors
-├── data/                 # Static Data & Types
-│   └── mock.ts           # Initial seed data (if any)
+│   ├── Navigation.tsx    # Bottom navigation bar
+│   ├── EntryModal.tsx    # Add/Edit form dialog
+│   ├── ProfileModal.tsx  # User profile settings
+│   └── ...
+├── contexts/             # Global State Management
+│   ├── AutoLockContext.tsx # Inactivity monitoring
+│   ├── ProfileContext.tsx  # User profile data
+│   ├── ThemeContext.tsx    # Dark/Light mode
+│   └── ...
 ├── pages/                # Application Views
 │   ├── Dashboard.tsx     # Main Vault View
-│   ├── Generator.tsx     # Password Generator Tool
 │   ├── Settings.tsx      # App Preferences
 │   └── Unlock.tsx        # Login Screen
 ├── utils/                # Core Logic Modules
-│   ├── crypto.ts         # AES-256 Encryption/Decryption wrappers
-│   └── generator.ts      # Password generation algorithm
-├── tests/                # Unit & Integration Tests
-│   ├── setup.ts          # Vitest environment configuration
-│   └── generator.test.ts # Tests for generator utility
-├── App.tsx               # Main Router & Provider composition
-└── main.tsx              # Application Entry Point
+│   ├── generator.ts      # Password generation logic
+│   └── passwordStrength.ts # Strength calculation
+├── types/                # TypeScript Interfaces
+├── App.tsx               # Main Component & Routing
+└── main.tsx              # Entry Point
+UML Diagram/              # Project Architecture Diagrams
 ```
 
 ## Troubleshooting
