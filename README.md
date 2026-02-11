@@ -5,7 +5,7 @@
 > A secure, AES-256 encrypted password vault built with React, TypeScript, and Tailwind CSS.
 > Features zero-knowledge architecture, biometric-ready auth, and a beautiful glassmorphism UI.
 
-![Vault Preview](https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1600&h=400)
+
 
 ## Table of Contents
 
