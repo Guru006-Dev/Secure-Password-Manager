@@ -19,6 +19,10 @@ import './index.css';
  * Component for animating page transitions.
  * Wraps page content to provide fade and slide effects on route changes.
  */
+/**
+ * Component for animating page transitions.
+ * Wraps page content to provide fade and slide effects on route changes.
+ */
 function PageTransition({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
@@ -35,6 +39,11 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 
 
 
+/**
+ * Main Application Component.
+ * Handles routing, global keyboard shortcuts, and context providers.
+ * Wraps the entire application in ErrorBoundary, ToastProvider, ThemeProvider, and AutoLockProvider.
+ */
 /**
  * Main Application Component.
  * Handles routing, global keyboard shortcuts, and context providers.

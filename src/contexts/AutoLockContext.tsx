@@ -11,6 +11,10 @@ interface AutoLockContextType {
 
 const AutoLockContext = createContext<AutoLockContextType | undefined>(undefined);
 
+/**
+ * Context provider for managing auto-lock and panic lock functionality.
+ * Tracks user activity and locks the vault after a period of inactivity.
+ */
 export function AutoLockProvider({ children }: { children: ReactNode }) {
     const [, setLocation] = useLocation();
     const [autoLockMinutes, setAutoLockMinutes] = useState(15);
@@ -76,6 +80,9 @@ export function AutoLockProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * Hook to access auto-lock settings and actions.
+ */
 export function useAutoLock() {
     const context = useContext(AutoLockContext);
     if (!context) {

@@ -1,5 +1,12 @@
 import type { VaultEntry } from '../types';
 
+/**
+ * Filters vault entries based on search query and category.
+ * @param entries List of vault entries to filter
+ * @param search Search string (matches website or username)
+ * @param category Category to filter by ('all' or specific category)
+ * @returns Filtered list of entries
+ */
 export function filterEntries(
     entries: VaultEntry[],
     search: string,

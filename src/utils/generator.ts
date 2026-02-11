@@ -1,3 +1,6 @@
+/**
+ * Configuration options for password generation.
+ */
 export interface GeneratorOptions {
     length: number;
     uppercase: boolean;
@@ -6,6 +9,11 @@ export interface GeneratorOptions {
     symbols: boolean;
 }
 
+/**
+ * Generates a cryptographically secure random password.
+ * @param options Configuration options
+ * @returns Generated password string
+ */
 export function generatePassword(options: GeneratorOptions): string {
     const charset = {
         uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
@@ -33,6 +41,11 @@ export function generatePassword(options: GeneratorOptions): string {
     return password;
 }
 
+/**
+ * Calculates a basic strength score for a password.
+ * @param password Password to evaluate
+ * @returns Strength rating ('Weak', 'Medium', 'Strong')
+ */
 export function calculateStrength(password: string): 'Weak' | 'Medium' | 'Strong' {
     if (password.length < 8) return 'Weak';
     let score = 0;

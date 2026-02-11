@@ -19,6 +19,10 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
+/**
+ * Context provider for displaying toast notifications.
+ * Manages the queue and rendering of toast messages.
+ */
 export function ToastProvider({ children }: { children: ReactNode }) {
     const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -96,6 +100,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * Hook to trigger toast notifications from any component.
+ */
 export function useToast() {
     const context = useContext(ToastContext);
     if (!context) {

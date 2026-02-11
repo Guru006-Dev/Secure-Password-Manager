@@ -1,4 +1,9 @@
 // Password strength calculator utility
+/**
+ * detailed password strength calculator.
+ * Evaluates length, complexity, and character variety.
+ * @returns Object containing numerical score (0-4), label, and color class.
+ */
 export function calculatePasswordStrength(password: string): {
     score: number; // 0-4
     label: string;
@@ -32,6 +37,11 @@ export function calculatePasswordStrength(password: string): {
 }
 
 // Check if password is commonly used (mock)
+/**
+ * Checks if a password is in a list of common/weak passwords.
+ * @param password Password to check
+ * @returns True if password is common, false otherwise
+ */
 export function isCommonPassword(password: string): boolean {
     const commonPasswords = [
         'password', '123456', '12345678', 'qwerty', 'abc123',

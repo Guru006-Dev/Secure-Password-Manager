@@ -8,6 +8,9 @@ interface DeleteConfirmProps {
     entryName: string;
 }
 
+/**
+ * Modal component to confirm deletion of a vault entry.
+ */
 export default function DeleteConfirm({ isOpen, onClose, onConfirm, entryName }: DeleteConfirmProps) {
     const handleConfirm = () => {
         onConfirm();

@@ -10,6 +10,10 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+/**
+ * Context provider for application theme (Light/Dark mode).
+ * Respects system preference and persists user choice.
+ */
 export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setTheme] = useState<Theme>(() => {
         // Check localStorage first
@@ -41,6 +45,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * Hook to toggle and access current theme.
+ */
 export function useTheme() {
     const context = useContext(ThemeContext);
     if (context === undefined) {

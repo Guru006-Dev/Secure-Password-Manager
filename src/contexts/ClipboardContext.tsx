@@ -12,6 +12,10 @@ interface ClipboardContextType {
 
 export const ClipboardContext = createContext<ClipboardContextType | undefined>(undefined);
 
+/**
+ * Context provider for handling clipboard operations securely.
+ * Automatically clears clipboard history after a set duration.
+ */
 export function ClipboardProvider({ children }: { children: ReactNode }) {
     const [hasCopied, setHasCopied] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
@@ -50,6 +54,9 @@ export function ClipboardProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * Hook to safely copy text to clipboard and track copied state.
+ */
 export function useClipboard() {
     const context = useContext(ClipboardContext);
     if (context === undefined) {

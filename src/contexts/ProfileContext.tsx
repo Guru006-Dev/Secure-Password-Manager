@@ -11,6 +11,10 @@ interface ProfileContextType {
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
+/**
+ * Context provider for user profile management.
+ * Persists profile data (name, avatar, banner) to local storage.
+ */
 export function ProfileProvider({ children }: { children: ReactNode }) {
     const [, setLocation] = useLocation();
     const [profile, setProfile] = useState<UserProfile>({
@@ -42,6 +46,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * Hook to access and update user profile data.
+ */
 export function useProfile() {
     const context = useContext(ProfileContext);
     if (context === undefined) {

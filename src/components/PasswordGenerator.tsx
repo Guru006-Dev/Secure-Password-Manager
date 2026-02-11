@@ -21,6 +21,10 @@ export default function PasswordGenerator({ onGenerate }: PasswordGeneratorProps
     const [generatedPassword, setGeneratedPassword] = useState('');
     const [copied, setCopied] = useState(false);
 
+    /**
+     * Generates a random password based on selected criteria.
+     * Uses cryptographically secure random values.
+     */
     const generatePassword = () => {
         let charset = '';
         if (includeUppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -47,6 +51,9 @@ export default function PasswordGenerator({ onGenerate }: PasswordGeneratorProps
         return password;
     };
 
+    /**
+     * Copies the generated password to the clipboard.
+     */
     const handleCopy = () => {
         if (generatedPassword) {
             navigator.clipboard.writeText(generatedPassword);

@@ -10,6 +10,11 @@ interface ProfileModalProps {
     onClose: () => void;
 }
 
+/**
+ * Modal component for user profile management.
+ * Allows updating display name, avatar, and banner color.
+ * Also provides logout functionality.
+ */
 export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     const { showToast } = useToast();
     const { profile, updateProfile, logout } = useProfile();

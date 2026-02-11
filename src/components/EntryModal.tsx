@@ -3,6 +3,9 @@ import { X, Eye, EyeOff, ChevronDown, Tag, Briefcase, User, DollarSign, MessageS
 import { motion, AnimatePresence } from 'framer-motion';
 import PasswordGenerator from './PasswordGenerator';
 
+/**
+ * Represents a single password entry in the vault.
+ */
 interface VaultEntry {
     id?: number;
     website: string;
@@ -23,6 +26,10 @@ interface EntryModalProps {
     mode: 'add' | 'edit';
 }
 
+/**
+ * Modal component for creating or editing a vault entry.
+ * Handles form validation, password generation, and category selection.
+ */
 export default function EntryModal({ isOpen, onClose, onSave, entry, mode }: EntryModalProps) {
     const [formData, setFormData] = useState<VaultEntry>(
         entry || { website: '', username: '', password: '', securityQuestion: '', securityAnswer: '', isFavorite: false }
@@ -40,6 +47,10 @@ export default function EntryModal({ isOpen, onClose, onSave, entry, mode }: Ent
         { id: 'Shopping', label: 'Shopping', icon: <ShoppingCart className="w-4 h-4" />, color: 'text-indigo-400' },
     ];
 
+    /**
+     * Validates form fields and updates the error state.
+     * @returns {boolean} True if the form is valid, false otherwise.
+     */
     const validate = (): boolean => {
         const newErrors: Partial<Record<keyof VaultEntry, string>> = {};
 
@@ -61,6 +72,10 @@ export default function EntryModal({ isOpen, onClose, onSave, entry, mode }: Ent
         return Object.keys(newErrors).length === 0;
     };
 
+    /**
+     * Handles form submission.
+     * Validates data and calls the onSave prop if successful.
+     */
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
