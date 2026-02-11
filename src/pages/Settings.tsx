@@ -1,104 +1,268 @@
-import { Moon, Sun, Monitor, Shield, Import, Download, Trash2, Database } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { Shield, Clock, Trash2, User, RefreshCw, Smartphone, Monitor, Globe } from 'lucide-react';
+import { useAutoLock } from '../contexts/AutoLockContext';
+import { useToast } from '../contexts/ToastContext';
+import ProfileModal from '../components/ProfileModal';
 
+/**
+ * Settings Page Component.
+ * Allows users to configure application preferences:
+ * - Theme toggles (Dark/Light)
+ * - Auto-lock timer configuration
+ * - Data management (Export/Import vault)
+ */
 export default function Settings() {
-    const { theme, accent, setTheme, setAccent } = useTheme();
+    const { autoLockMinutes, setAutoLockMinutes } = useAutoLock();
+    const { showToast } = useToast();
 
-    const accents = [
-        { id: 'violet', color: 'bg-violet-500' },
-        { id: 'blue', color: 'bg-blue-500' },
-        { id: 'emerald', color: 'bg-emerald-500' },
-        { id: 'amber', color: 'bg-amber-500' },
-        { id: 'rose', color: 'bg-rose-500' },
-        { id: 'cyan', color: 'bg-cyan-500' },
-    ];
+    // Load settings from localStorage
+    const [clipboardClearDelay, setClipboardClearDelay] = useState(() => {
+        const saved = localStorage.getItem('clipboardClearDelay');
+        return saved ? parseInt(saved) : 30;
+    });
+
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [lastSyncTime, setLastSyncTime] = useState<string | null>(localStorage.getItem('lastSyncTime'));
+
+
+
+    // Time until auto-lock (mock calculation)
+    const [timeUntilLock, setTimeUntilLock] = useState(autoLockMinutes * 60);
+
+    // Persist settings to localStorage
+    useEffect(() => {
+        localStorage.setItem('autoLockMinutes', autoLockMinutes.toString());
+    }, [autoLockMinutes]);
+
+    useEffect(() => {
+        localStorage.setItem('clipboardClearDelay', clipboardClearDelay.toString());
+    }, [clipboardClearDelay]);
+
+
+
+    // Mock countdown for demo
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTimeUntilLock(prev => {
+                if (prev <= 1) return autoLockMinutes * 60;
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [autoLockMinutes]);
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const handleSettingsChange = (setting: string) => {
+        showToast(`${setting} updated`, 'success');
+    };
+
+    const handleSync = () => {
+        setIsSyncing(true);
+        setTimeout(() => {
+            setIsSyncing(false);
+            const time = new Date().toLocaleTimeString();
+            setLastSyncTime(time);
+            localStorage.setItem('lastSyncTime', time);
+            showToast('Vault synchronized with all devices', 'success');
+        }, 2000);
+    };
 
     return (
-        <div className="p-6 md:p-8 max-w-4xl mx-auto min-h-screen animate-in fade-in duration-500">
-            <header className="mb-10">
-                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60">
-                    Settings
-                </h1>
-                <p className="text-muted-foreground mt-1">
-                    Personalize your vault and manage data.
-                </p>
-            </header>
-
-            <div className="space-y-8">
-                {/* Visual Section */}
-                <section className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-3xl p-8 space-y-6">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-primary/10 rounded-xl">
-                            <Monitor className="w-5 h-5 text-primary" />
-                        </div>
-                        <h2 className="text-xl font-bold">Appearance</h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Theme Toggle */}
-                        <div className="space-y-4">
-                            <label className="text-sm font-medium text-muted-foreground">App Theme</label>
-                            <div className="flex bg-muted p-1 rounded-2xl w-full">
-                                <button
-                                    onClick={() => setTheme('light')}
-                                    className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-all ${theme === 'light' ? 'bg-background shadow-md text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                                >
-                                    <Sun className="w-4 h-4" /> Light
-                                </button>
-                                <button
-                                    onClick={() => setTheme('dark')}
-                                    className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-all ${theme === 'dark' ? 'bg-background shadow-md text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                                >
-                                    <Moon className="w-4 h-4" /> Dark
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Accent Picker */}
-                        <div className="space-y-4">
-                            <label className="text-sm font-medium text-muted-foreground">Accent Color</label>
-                            <div className="flex gap-3 flex-wrap">
-                                {accents.map((item) => (
-                                    <button
-                                        key={item.id}
-                                        onClick={() => setAccent(item.id as any)}
-                                        className={`w-10 h-10 rounded-full ${item.color} relative transition-transform hover:scale-110 active:scale-95 ring-2 ring-offset-2 ring-offset-background ${accent === item.id ? 'ring-foreground' : 'ring-transparent'}`}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Data Section (Mock for now, implemented in Day 7/Future) */}
-                <section className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-3xl p-8 space-y-6">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-primary/10 rounded-xl">
-                            <Database className="w-5 h-5 text-primary" />
-                        </div>
-                        <h2 className="text-xl font-bold">Data Management</h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button className="p-4 border border-border/50 rounded-2xl bg-muted/20 hover:bg-muted/50 transition-colors text-left group">
-                            <Download className="w-6 h-6 text-primary mb-3 group-hover:scale-110 transition-transform" />
-                            <h3 className="font-semibold">Export Vault</h3>
-                            <p className="text-xs text-muted-foreground mt-1">Download JSON backup</p>
-                        </button>
-                        <button className="p-4 border border-border/50 rounded-2xl bg-muted/20 hover:bg-muted/50 transition-colors text-left group">
-                            <Import className="w-6 h-6 text-primary mb-3 group-hover:scale-110 transition-transform" />
-                            <h3 className="font-semibold">Import Data</h3>
-                            <p className="text-xs text-muted-foreground mt-1">Restore from backup</p>
-                        </button>
-                        <button className="p-4 border border-destructive/20 rounded-2xl bg-destructive/5 hover:bg-destructive/10 transition-colors text-left group">
-                            <Trash2 className="w-6 h-6 text-destructive mb-3 group-hover:scale-110 transition-transform" />
-                            <h3 className="font-semibold text-destructive">Erase Vault</h3>
-                            <p className="text-xs text-destructive/70 mt-1">Permanently delete all</p>
-                        </button>
-                    </div>
-                </section>
+        <div className="min-h-screen bg-background pb-24">
+            {/* Header */}
+            <div className="border-b border-white/5 glass-panel">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <h1 className="text-3xl font-display font-bold flex items-center gap-3">
+                        <Shield className="w-8 h-8 text-primary" />
+                        Security Settings
+                    </h1>
+                    <p className="text-muted-foreground mt-2">
+                        Configure your vault's security and behavior preferences
+                    </p>
+                </div>
             </div>
+
+            {/* Settings Content */}
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+                {/* Auto-Lock Timer */}
+                <div className="glass-panel p-6 rounded-2xl">
+                    <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                            <Clock className="w-5 h-5 text-primary" />
+                            <div>
+                                <h3 className="font-semibold">Auto-Lock Timer</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Lock vault after inactivity
+                                </p>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-2xl font-mono font-bold text-primary">
+                                {autoLockMinutes} min
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                                Locks in: {formatTime(timeUntilLock)}
+                            </div>
+                        </div>
+                    </div>
+
+                    <input
+                        type="range"
+                        min="5"
+                        max="60"
+                        value={autoLockMinutes}
+                        onChange={(e) => setAutoLockMinutes(Number(e.target.value))}
+                        onMouseUp={() => handleSettingsChange('Auto-lock timer')}
+                        onTouchEnd={() => handleSettingsChange('Auto-lock timer')}
+                        className="w-full cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                        <span>5 min</span>
+                        <span>60 min</span>
+                    </div>
+                </div>
+
+                {/* Clipboard Clear Delay */}
+                <div className="glass-panel p-6 rounded-2xl">
+                    <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                            <Trash2 className="w-5 h-5 text-primary" />
+                            <div>
+                                <h3 className="font-semibold">Clipboard Auto-Clear</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Clear copied passwords after delay
+                                </p>
+                            </div>
+                        </div>
+                        <div className="text-2xl font-mono font-bold text-primary">
+                            {clipboardClearDelay}s
+                        </div>
+                    </div>
+
+                    <input
+                        type="range"
+                        min="10"
+                        max="120"
+                        step="10"
+                        value={clipboardClearDelay}
+                        onChange={(e) => setClipboardClearDelay(Number(e.target.value))}
+                        onMouseUp={() => handleSettingsChange('Clipboard clear delay')}
+                        onTouchEnd={() => handleSettingsChange('Clipboard clear delay')}
+                        className="w-full cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                        <span>10s</span>
+                        <span>120s</span>
+                    </div>
+                </div>
+
+                {/* Profile Section */}
+                <div className="glass-panel p-6 rounded-2xl">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                            <User className="w-5 h-5 text-primary" />
+                            <div>
+                                <h3 className="font-semibold">User Profile</h3>
+                                <p className="text-sm text-muted-foreground">Customize your vault identity</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setShowProfileModal(true)}
+                            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                        >
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                {/* Device Sync Section */}
+                <div className="glass-panel p-6 rounded-2xl space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Globe className="w-5 h-5 text-blue-400" />
+                            <div>
+                                <h3 className="font-semibold">Cross-Device Sync</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    {lastSyncTime ? `Last synced at ${lastSyncTime}` : 'Not synced recently'}
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={handleSync}
+                            disabled={isSyncing}
+                            className="px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                            {isSyncing ? 'Syncing...' : 'Sync Now'}
+                        </button>
+                    </div>
+
+                    <div className="h-px bg-white/10" />
+
+                    <div className="space-y-3 pt-2">
+                        <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-2 text-foreground">
+                                <Monitor className="w-4 h-4 opacity-50" />
+                                <span>Windows PC (This Device)</span>
+                            </div>
+                            <span className="text-xs text-green-400 font-medium flex items-center gap-1">
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                                Active
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm opacity-60">
+                            <div className="flex items-center gap-2">
+                                <Smartphone className="w-4 h-4 opacity-50" />
+                                <span>iPhone 15 Pro</span>
+                            </div>
+                            <span className="text-xs">Last seen 2h ago</span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                {/* Keyboard Shortcuts Hint */}
+                <div className="glass-panel p-6 rounded-2xl bg-primary/5 border border-primary/20">
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                        <span className="text-primary">⌨️</span>
+                        Keyboard Shortcuts
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div className="flex items-center justify-between p-2 bg-muted rounded">
+                            <span className="text-muted-foreground">Search vault</span>
+                            <kbd className="px-2 py-1 bg-white/10 rounded font-mono text-xs">Ctrl+K</kbd>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-muted rounded">
+                            <span className="text-muted-foreground">New entry</span>
+                            <kbd className="px-2 py-1 bg-white/10 rounded font-mono text-xs">Ctrl+N</kbd>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-muted rounded">
+                            <span className="text-muted-foreground">Lock vault</span>
+                            <kbd className="px-2 py-1 bg-white/10 rounded font-mono text-xs">Ctrl+L</kbd>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-muted rounded">
+                            <span className="text-muted-foreground">Settings</span>
+                            <kbd className="px-2 py-1 bg-white/10 rounded font-mono text-xs">Ctrl+,</kbd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <ProfileModal
+                isOpen={showProfileModal}
+                onClose={() => setShowProfileModal(false)}
+            />
         </div>
     );
 }

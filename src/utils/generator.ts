@@ -41,7 +41,7 @@ export function calculateStrength(password: string): 'Weak' | 'Medium' | 'Strong
     if (/[0-9]/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    if (score < 3 || password.length < 10) return 'Weak';
-    if (score === 3 && password.length >= 10) return 'Medium';
+    if (score < 3) return 'Weak';
+    if (score === 3 || password.length < 12) return 'Medium';
     return 'Strong';
 }

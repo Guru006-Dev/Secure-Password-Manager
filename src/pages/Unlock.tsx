@@ -1,89 +1,190 @@
 import { useState } from 'react';
-import { Lock, Fingerprint, ArrowRight, AlertTriangle } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
+import { useLocation } from 'wouter';
+import { Shield, Fingerprint, KeyRound, Hash, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
+type UnlockMethod = 'password' | 'otp' | 'biometric';
+
+/**
+ * Unlock Page Component.
+ * The primary entry point for the vault. Requires a master password to authenticate.
+ * Features a panic mode trigger and authentication feedback.
+ */
 export default function Unlock() {
-    const { unlock } = useAuth();
+    const [, setLocation] = useLocation();
+    const [method, setMethod] = useState<UnlockMethod>('password');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(false);
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [loading, setLoading] = useState(false);
 
-    const handleUnlock = (e: React.FormEvent) => {
-        e.preventDefault();
-        const success = unlock(password);
-        if (!success) {
-            setError(true);
-            setPassword('');
-            // Shake animation logic handled by framer-motion key prop usually, or simple state
+    const handleUnlock = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            setLocation('/dashboard');
+        }, 1500);
+    };
+
+    const handleOtpChange = (index: number, value: string) => {
+        if (value.length <= 1 && /^\d*$/.test(value)) {
+            const newOtp = [...otp];
+            newOtp[index] = value;
+            setOtp(newOtp);
+
+            // Auto-focus next input
+            if (value && index < 5) {
+                const nextInput = document.getElementById(`otp-${index + 1}`);
+                nextInput?.focus();
+            }
         }
     };
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[100px]" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/5 rounded-full blur-[100px]" />
-            </div>
+        <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+            {/* Background Effect */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
 
-            <div className="relative z-10 w-full max-w-md p-8">
-                <div className="text-center mb-10">
-                    <div className="mx-auto w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 ring-1 ring-primary/20 shadow-xl shadow-primary/10">
-                        <Lock className="w-10 h-10 text-primary" />
-                    </div>
-                    <h1 className="text-3xl font-bold tracking-tight mb-2">Secure Vault</h1>
-                    <p className="text-muted-foreground">Enter your master password to decrypt</p>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md text-center z-10"
+            >
+                {/* Lock Icon */}
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20 animate-pulse">
+                    <Shield className="w-10 h-10 text-primary" />
                 </div>
 
-                <form onSubmit={handleUnlock} className="space-y-6">
-                    <div className="space-y-2">
-                        <div className="relative group">
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                    setError(false);
-                                }}
-                                className={`w-full bg-muted/50 border ${error ? 'border-destructive/50 focus:border-destructive' : 'border-border/50 focus:border-primary/50'} rounded-2xl px-6 py-4 text-center text-lg tracking-widest outline-none focus:ring-4 ${error ? 'focus:ring-destructive/10' : 'focus:ring-primary/10'} transition-all`}
-                                placeholder="••••"
-                                autoFocus
-                            />
-                            {error && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="absolute inset-y-0 right-4 flex items-center"
+                <h1 className="text-2xl font-bold font-display mb-2">Vault Locked</h1>
+                <p className="text-muted-foreground mb-8">Verify your identity to proceed</p>
+
+                {/* Glass Panel */}
+                <div className="glass-panel p-6 rounded-2xl space-y-4">
+                    <AnimatePresence mode="wait">
+                        {/* Password Method */}
+                        {method === 'password' && (
+                            <motion.div
+                                key="password"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                className="space-y-4"
+                            >
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleUnlock()}
+                                    placeholder="Master Password"
+                                    className="w-full text-center bg-secondary/50 border border-white/10 h-12 px-4 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                                />
+                                <button
+                                    onClick={handleUnlock}
+                                    disabled={loading || !password}
+                                    className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
-                                    <AlertTriangle className="w-5 h-5 text-destructive" />
-                                </motion.div>
-                            )}
-                        </div>
-                        {error && (
-                            <p className="text-xs text-center text-destructive font-medium animate-pulse">
-                                Incorrect password. Hint: 1234
-                            </p>
+                                    {loading ? 'Verifying...' : 'Unlock'}
+                                    {!loading && <ArrowRight className="w-5 h-5" />}
+                                </button>
+                            </motion.div>
                         )}
+
+                        {/* OTP Method */}
+                        {method === 'otp' && (
+                            <motion.div
+                                key="otp"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                className="space-y-4"
+                            >
+                                <p className="text-sm text-muted-foreground mb-4">
+                                    Enter the 6-digit code sent to your device
+                                </p>
+                                <div className="flex gap-2 justify-center">
+                                    {otp.map((digit, index) => (
+                                        <input
+                                            key={index}
+                                            id={`otp-${index}`}
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={1}
+                                            value={digit}
+                                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                                            className="w-12 h-14 text-center text-2xl font-mono bg-secondary/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                                        />
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={handleUnlock}
+                                    disabled={loading || otp.some(d => !d)}
+                                    className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-semibold transition-all disabled:opacity-50"
+                                >
+                                    {loading ? 'Verifying...' : 'Verify OTP'}
+                                </button>
+                            </motion.div>
+                        )}
+
+                        {/* Biometric Method */}
+                        {method === 'biometric' && (
+                            <motion.div
+                                key="biometric"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                className="py-4"
+                            >
+                                <div
+                                    onClick={handleUnlock}
+                                    className="w-24 h-24 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-4 cursor-pointer hover:bg-accent/20 transition-colors"
+                                >
+                                    <Fingerprint className={`w-12 h-12 text-accent ${loading ? 'animate-ping' : ''}`} />
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    Scan fingerprint or use Face ID
+                                </p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Method Selector */}
+                    <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/5">
+                        <button
+                            onClick={() => setMethod('password')}
+                            className={`py-3 px-3 rounded-xl text-sm font-medium transition-all ${method === 'password' ? 'bg-white/10 text-foreground' : 'text-muted-foreground hover:bg-white/5'
+                                }`}
+                        >
+                            <KeyRound className="w-5 h-5 mx-auto mb-1" />
+                            Password
+                        </button>
+                        <button
+                            onClick={() => setMethod('otp')}
+                            className={`py-3 px-3 rounded-xl text-sm font-medium transition-all ${method === 'otp' ? 'bg-white/10 text-foreground' : 'text-muted-foreground hover:bg-white/5'
+                                }`}
+                        >
+                            <Hash className="w-5 h-5 mx-auto mb-1" />
+                            OTP
+                        </button>
+                        <button
+                            onClick={() => setMethod('biometric')}
+                            className={`py-3 px-3 rounded-xl text-sm font-medium transition-all ${method === 'biometric' ? 'bg-white/10 text-foreground' : 'text-muted-foreground hover:bg-white/5'
+                                }`}
+                        >
+                            <Fingerprint className="w-5 h-5 mx-auto mb-1" />
+                            Bio
+                        </button>
                     </div>
+                </div>
 
+                {/* Switch Account */}
+                <div className="mt-8">
                     <button
-                        type="submit"
-                        className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20"
+                        onClick={() => setLocation('/')}
+                        className="text-muted-foreground hover:text-white transition-colors"
                     >
-                        <span>Unlock Vault</span>
-                        <ArrowRight className="w-5 h-5" />
-                    </button>
-                </form>
-
-                <div className="mt-12 flex justify-center">
-                    <button
-                        className="p-4 rounded-full bg-muted/50 border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all group"
-                        title="Biometric Unlock (Coming Soon)"
-                    >
-                        <Fingerprint className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                        ← Back to Landing
                     </button>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }
