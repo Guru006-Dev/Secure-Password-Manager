@@ -1,7 +1,17 @@
+import { useState } from 'react';
 import { Search, Plus, Filter } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MOCK_VAULT } from '../data/mock';
+import VaultItem from '../components/VaultItem';
 
 export default function Dashboard() {
+    const [search, setSearch] = useState('');
+
+    const filteredEntries = MOCK_VAULT.filter(entry =>
+        entry.website.toLowerCase().includes(search.toLowerCase()) ||
+        entry.username.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <div className="p-6 md:p-8 max-w-7xl mx-auto min-h-screen">
             {/* Header */}
@@ -22,45 +32,44 @@ export default function Dashboard() {
             </header>
 
             {/* Search & Filter Bar */}
-            <div className="sticky top-4 z-20 mb-6 bg-background/50 backdrop-blur-md p-2 -mx-2 rounded-2xl border border-transparent">
+            <div className="sticky top-4 z-20 mb-6 bg-background/80 backdrop-blur-md p-2 -mx-2 rounded-2xl border border-transparent">
                 <div className="flex gap-2">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
                             type="text"
                             placeholder="Search your vault..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
                             className="w-full bg-muted/50 border border-border/50 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                            disabled
                         />
                     </div>
-                    <button className="px-4 py-3 bg-muted/50 border border-border/50 rounded-xl hover:bg-muted transition-colors" disabled>
+                    <button className="px-4 py-3 bg-muted/50 border border-border/50 rounded-xl hover:bg-muted transition-colors">
                         <Filter className="w-4 h-4 text-muted-foreground" />
                     </button>
                 </div>
             </div>
 
-            {/* Empty State / Content Placeholder */}
+            {/* Vault Content */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[1, 2, 3].map((i) => (
-                    <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="p-6 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm h-48 flex flex-col justify-center items-center text-center gap-3"
-                    >
-                        <div className="w-12 h-12 rounded-full bg-muted/50 animate-pulse" />
-                        <div className="w-2/3 h-4 bg-muted/50 rounded animate-pulse" />
-                        <div className="w-1/3 h-3 bg-muted/30 rounded animate-pulse" />
-                    </motion.div>
-                ))}
+                <AnimatePresence>
+                    {filteredEntries.map((entry) => (
+                        <VaultItem key={entry.id} entry={entry} />
+                    ))}
+                </AnimatePresence>
+
+                {filteredEntries.length === 0 && (
+                    <div className="col-span-full py-12 text-center text-muted-foreground opacity-50">
+                        No entries found matching "{search}"
+                    </div>
+                )}
             </div>
 
             <div className="mt-12 text-center p-8 border border-dashed border-border rounded-3xl bg-muted/10">
                 <p className="text-muted-foreground">
-                    🚀 Day 1 Initialization Complete.
+                    🚀 Day 3: Vault Display Active.
                     <br />
-                    <span className="text-xs opacity-70">Database connection and Encryption modules will be activated in Day 2.</span>
+                    <span className="text-xs opacity-70">Read-Only Mode. CRUD operations unlock in Day 4.</span>
                 </p>
             </div>
         </div>
