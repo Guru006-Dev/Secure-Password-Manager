@@ -9,8 +9,8 @@ export default function Navigation() {
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-        { icon: Shield, label: 'Generator', path: '/generator' }, // Enabled
-        { icon: Settings, label: 'Settings', path: '/settings', disabled: true },
+        { icon: Shield, label: 'Generator', path: '/generator' },
+        { icon: Settings, label: 'Settings', path: '/settings' }, // Enabled
     ];
 
     return (
