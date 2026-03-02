@@ -7,6 +7,7 @@ import Generator from './pages/Generator';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { VaultProvider } from './context/VaultContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './context/ToastContext'; // Add Import
 
 function AuthenticatedApp() {
     const { isLocked } = useAuth();
@@ -45,11 +46,13 @@ function App() {
     return (
         <AuthProvider>
             <ThemeProvider>
-                <VaultProvider>
-                    <Router>
-                        <AuthenticatedApp />
-                    </Router>
-                </VaultProvider>
+                <ToastProvider>
+                    <VaultProvider>
+                        <Router>
+                            <AuthenticatedApp />
+                        </Router>
+                    </VaultProvider>
+                </ToastProvider>
             </ThemeProvider>
         </AuthProvider>
     );
