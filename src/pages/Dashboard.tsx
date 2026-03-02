@@ -1,16 +1,39 @@
 import { useState } from 'react';
 import { Search, Plus, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MOCK_VAULT } from '../data/mock';
+import { useVault } from '../context/VaultContext';
 import VaultItem from '../components/VaultItem';
+import EntryModal from '../components/EntryModal';
+import { VaultEntry } from '../types';
 
 export default function Dashboard() {
+    const { entries, addEntry, updateEntry, deleteEntry, toggleFavorite } = useVault();
     const [search, setSearch] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingEntry, setEditingEntry] = useState<VaultEntry | null>(null);
 
-    const filteredEntries = MOCK_VAULT.filter(entry =>
+    const filteredEntries = entries.filter(entry =>
         entry.website.toLowerCase().includes(search.toLowerCase()) ||
         entry.username.toLowerCase().includes(search.toLowerCase())
     );
+
+    const handleSave = (entryData: Partial<VaultEntry>) => {
+        if (editingEntry) {
+            updateEntry(editingEntry.id, entryData);
+        } else {
+            addEntry(entryData as any);
+        }
+    };
+
+    const openAddModal = () => {
+        setEditingEntry(null);
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (entry: VaultEntry) => {
+        setEditingEntry(entry);
+        setIsModalOpen(true);
+    };
 
     return (
         <div className="p-6 md:p-8 max-w-7xl mx-auto min-h-screen">
@@ -25,7 +48,10 @@ export default function Dashboard() {
                     </p>
                 </div>
 
-                <button disabled className="group bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 shadow-lg shadow-primary/25 opacity-70 cursor-not-allowed">
+                <button
+                    onClick={openAddModal}
+                    className="group bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 shadow-lg shadow-primary/25 hover:scale-105 active:scale-95 transition-all"
+                >
                     <Plus className="w-5 h-5" />
                     <span>Add Entry</span>
                 </button>
@@ -54,7 +80,13 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <AnimatePresence>
                     {filteredEntries.map((entry) => (
-                        <VaultItem key={entry.id} entry={entry} />
+                        <VaultItem
+                            key={entry.id}
+                            entry={entry}
+                            onEdit={openEditModal}
+                            onDelete={deleteEntry}
+                            onToggleFavorite={toggleFavorite}
+                        />
                     ))}
                 </AnimatePresence>
 
@@ -65,11 +97,18 @@ export default function Dashboard() {
                 )}
             </div>
 
+            <EntryModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSave={handleSave}
+                initialData={editingEntry}
+            />
+
             <div className="mt-12 text-center p-8 border border-dashed border-border rounded-3xl bg-muted/10">
                 <p className="text-muted-foreground">
-                    🚀 Day 3: Vault Display Active.
+                    🚀 Day 4: Full CRUD Active.
                     <br />
-                    <span className="text-xs opacity-70">Read-Only Mode. CRUD operations unlock in Day 4.</span>
+                    <span className="text-xs opacity-70">Add, Edit, Delete, and Favorite entries with ease.</span>
                 </p>
             </div>
         </div>
