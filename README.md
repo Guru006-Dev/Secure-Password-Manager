@@ -6,7 +6,7 @@ A modern, secure, and user-friendly password manager built with React, TypeScrip
 
 *   **Day 1 (Feb 2):** ✅ Project Initialization & UI Shell
 *   **Day 2 (Feb 3):** ✅ Authentication System (Unlock Screen & Panic Lock)
-*   **Day 3 (Feb 4):** ⏳ Vault Display (Read-Only)
+*   **Day 3 (Feb 4):** ✅ Vault Display (Read-Only)
 *   **Day 4 (Feb 5):** ⏳ Core CRUD Functionality
 *   **Day 5 (Feb 6):** ⏳ Security Tools (Generator)
 *   **Day 6 (Feb 7):** ⏳ Customization & Themes
