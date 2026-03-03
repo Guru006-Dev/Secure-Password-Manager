@@ -2,8 +2,8 @@
 
 > **Status:** 🟢 Completed (v1.0.0)
 >
-> A military-grade, zero-knowledge password vault built with React, TypeScript, and Tailwind CSS.
-> Features AES-256 encryption, biometric-ready auth, and a beautiful glassmorphism UI.
+> A secure, AES-256 encrypted password vault built with React, TypeScript, and Tailwind CSS.
+> Features zero-knowledge architecture, biometric-ready auth, and a beautiful glassmorphism UI.
 
 ![Vault Preview](https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1600&h=400)
 
@@ -101,13 +101,23 @@ This will generate static files in the `dist` directory, ready to be deployed to
 
 ### 🧪 Running Tests
 
-To execute the unit test suite (powered by [Vitest](https://vitest.dev/)):
+We use a modern testing stack to ensure reliability and security.
+
+*   **Test Runner:** [Vitest](https://vitest.dev/) (Blazing fast, Vite-native)
+*   **Assertions:** [React Testing Library](https://testing-library.com/) (Component testing)
+*   **Environment:** jsdom (Browser simulation)
+
+#### Execute Unit Tests
+Run the full test suite to verify cryptographic utilities and core logic:
 
 ```bash
 npm test
 ```
 
-This will run all `.test.ts` and `.test.tsx` files in the project.
+#### What's Tested?
+*   **Crypto Utils:** Verifies that password generation obeys length and character rules.
+*   **Strength Meter:** Ensures the strength calculation algorithm is accurate.
+*   **Validation:** Checks that security constraints are enforced.
 
 ## Usage
 
@@ -138,14 +148,31 @@ This will run all `.test.ts` and `.test.tsx` files in the project.
 ## Project Structure
 
 ```bash
+```bash
 src/
-├── components/       # Reusable UI components (VaultItem, Navigation, Toast)
-├── context/          # Global State (Auth, Vault, Theme, Toast)
-├── data/             # Mock data and constants
-├── pages/            # Main views (Dashboard, Generator, Settings, Unlock)
-├── utils/            # Helper functions (crypto, generator)
-├── App.tsx           # Main Application Layout & Routing
-└── main.tsx          # Entry Point
+├── components/           # Reusable UI Components
+│   ├── Navigation.tsx    # Sidebar/Mobile Menu associated logic
+│   ├── VaultItem.tsx     # Individual password entry card
+│   └── EntryModal.tsx    # Add/Edit form using Dialog
+├── context/              # Global State Management (React Context)
+│   ├── AuthContext.tsx   # Master Password & Unlock State
+│   ├── VaultContext.tsx  # CRUD operations & Encryption logic
+│   └── ThemeContext.tsx  # Dark/Light mode & Accent colors
+├── data/                 # Static Data & Types
+│   └── mock.ts           # Initial seed data (if any)
+├── pages/                # Application Views
+│   ├── Dashboard.tsx     # Main Vault View
+│   ├── Generator.tsx     # Password Generator Tool
+│   ├── Settings.tsx      # App Preferences
+│   └── Unlock.tsx        # Login Screen
+├── utils/                # Core Logic Modules
+│   ├── crypto.ts         # AES-256 Encryption/Decryption wrappers
+│   └── generator.ts      # Password generation algorithm
+├── tests/                # Unit & Integration Tests
+│   ├── setup.ts          # Vitest environment configuration
+│   └── generator.test.ts # Tests for generator utility
+├── App.tsx               # Main Router & Provider composition
+└── main.tsx              # Application Entry Point
 ```
 
 ## Troubleshooting
@@ -177,3 +204,4 @@ Distributed under the **MIT License**. See `LICENSE` for more information.
 ---
 
 **Copyright © 2026 Secure Password Manager Contributors.**
+where 
