@@ -10,7 +10,7 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: 'hsl(var(--card))',
-        'card-foreground': 'hsl(var(--card-foreground))', // Fixed typo: card-foreground variable wasn't defined in CSS, mapping to foreground for now or need to add it. let's map to foreground
+        'card-foreground': 'hsl(var(--card-foreground))',
         primary: 'hsl(var(--primary))',
         'primary-foreground': 'hsl(var(--primary-foreground))',
         secondary: 'hsl(var(--secondary))',

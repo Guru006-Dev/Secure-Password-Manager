@@ -1,0 +1,9 @@
+src/components/Navigation.tsx(38,50): error TS2339: Property 'disabled' does not exist on type '{ icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; label: string; path: string; }'.
+src/components/Navigation.tsx(39,44): error TS2339: Property 'disabled' does not exist on type '{ icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; label: string; path: string; }'.
+src/components/Navigation.tsx(42,40): error TS2339: Property 'disabled' does not exist on type '{ icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; label: string; path: string; }'.
+src/components/Navigation.tsx(49,35): error TS2339: Property 'disabled' does not exist on type '{ icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; label: string; path: string; }'.
+src/components/VaultItem.tsx(2,56): error TS6133: 'Copy' is declared but its value is never read.
+src/pages/Dashboard.tsx(3,10): error TS6133: 'motion' is declared but its value is never read.
+src/pages/Generator.tsx(18,11): error TS6133: 'addToast' is declared but its value is never read.
+src/pages/Settings.tsx(1,30): error TS6133: 'Shield' is declared but its value is never read.
+src/pages/Settings.tsx(3,1): error TS6133: 'motion' is declared but its value is never read.

@@ -1,73 +1,69 @@
-import { Shield, LayoutDashboard, Lock, Settings, User, LogOut } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'wouter';
+import { Home, Settings, AlertOctagon, PieChart, Sun, Moon } from 'lucide-react';
+import { useAutoLock } from '../contexts/AutoLockContext';
+import { useToast } from '../contexts/ToastContext';
+import { useTheme } from '../contexts/ThemeContext';
 
+/**
+ * Bottom Navigation Component.
+ * Provides access to main app sections (Vault, Insights, Settings).
+ * Also houses the "Panic Lock" button and Theme Toggle.
+ */
 export default function Navigation() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { panic } = useAuth();
+    const [location, setLocation] = useLocation();
+    const { panicLock } = useAutoLock();
+    const { showToast } = useToast();
+    const { theme, toggleTheme } = useTheme();
 
     const navItems = [
-        { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-        { icon: Shield, label: 'Generator', path: '/generator' },
-        { icon: Settings, label: 'Settings', path: '/settings' }, // Enabled
+        { path: '/dashboard', icon: Home, label: 'Vault' },
+        { path: '/insights', icon: PieChart, label: 'Insights' },
+        // { path: '/extension', icon: Chrome, label: 'Extension' },
+        { path: '/settings', icon: Settings, label: 'Settings' },
     ];
 
+    const handlePanicLock = () => {
+        showToast('Emergency lock activated!', 'warning');
+        panicLock();
+    };
+
     return (
-        <aside className="w-full md:w-64 border-r border-border/40 bg-card/30 backdrop-blur-xl md:h-screen sticky top-0 z-50 flex flex-col">
-            <div className="p-6 flex-1">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="p-2 bg-primary/10 rounded-xl">
-                        <Lock className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                        <h1 className="font-bold text-lg tracking-tight">Secure Vault</h1>
-                        <p className="text-xs text-muted-foreground">Day 2: Authentication</p>
-                    </div>
-                </div>
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+            <div className="glass-panel px-3 py-2 rounded-2xl flex items-center gap-1">
+                {navItems.map((item) => (
+                    <button
+                        key={item.path}
+                        onClick={() => setLocation(item.path)}
+                        className={`px-3 py-2 rounded-xl flex items-center gap-2 transition-all text-sm ${location === item.path
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                            }`}
+                    >
+                        <item.icon className="w-4 h-4" />
+                        <span className="font-medium hidden md:inline">{item.label}</span>
+                    </button>
+                ))}
 
-                <nav className="space-y-2">
-                    {navItems.map((item) => (
-                        <button
-                            key={item.label}
-                            onClick={() => !item.disabled && navigate(item.path)}
-                            disabled={item.disabled}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${location.pathname === item.path
-                                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
-                                : item.disabled
-                                    ? 'opacity-50 cursor-not-allowed text-muted-foreground'
-                                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                                }`}
-                        >
-                            <item.icon className="w-5 h-5" />
-                            <span className="font-medium">{item.label}</span>
-                            {item.disabled && <span className="ml-auto text-[10px] uppercase font-bold bg-muted px-1.5 py-0.5 rounded">Soon</span>}
-                        </button>
-                    ))}
-                </nav>
-            </div>
+                <div className="w-px h-8 bg-white/10 mx-1" />
 
-            <div className="p-6 border-t border-border/20 space-y-4">
+                {/* Theme Toggle */}
                 <button
-                    onClick={panic}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all duration-300 font-medium group"
+                    onClick={toggleTheme}
+                    className="px-3 py-2 rounded-xl flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all text-sm"
+                    title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
                 >
-                    <LogOut className="w-4 h-4 group-hover:rotate-180 transition-transform" />
-                    <span>Panic Lock</span>
+                    {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </button>
 
-                <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/10">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                            <User className="w-4 h-4 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">Welcome User</p>
-                            <p className="text-xs text-muted-foreground">Project Admin</p>
-                        </div>
-                    </div>
-                </div>
+                <button
+                    onClick={handlePanicLock}
+                    className="px-3 py-2 rounded-xl flex items-center gap-2 text-destructive hover:bg-destructive/10 transition-all text-sm"
+                    title="Panic Lock (Clear All Data)"
+                >
+                    <AlertOctagon className="w-4 h-4" />
+                    <span className="font-medium hidden md:inline">Panic</span>
+                </button>
             </div>
-        </aside>
+        </nav>
     );
 }
