@@ -55,6 +55,7 @@ It runs entirely client-side (for this version), ensuring that your secrets rema
 - **Animations:** [Framer Motion](https://www.framer.com/motion/)
 - **Icons:** [Lucide React](https://lucide.dev/)
 - **State Management:** React Context API
+- **Testing:** [Vitest](https://vitest.dev/), [React Testing Library](https://testing-library.com/)
 
 ## Installing and Running
 
@@ -97,6 +98,16 @@ npm run build
 ```
 
 This will generate static files in the `dist` directory, ready to be deployed to Vercel, Netlify, or AWS S3.
+
+### 🧪 Running Tests
+
+To execute the unit test suite (powered by [Vitest](https://vitest.dev/)):
+
+```bash
+npm test
+```
+
+This will run all `.test.ts` and `.test.tsx` files in the project.
 
 ## Usage
 
